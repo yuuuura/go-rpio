@@ -69,6 +69,7 @@ package rpio
 import (
 	"bytes"
 	"encoding/binary"
+	"log"
 	"os"
 	"reflect"
 	"sync"
@@ -716,21 +717,26 @@ func Close() error {
 // Use the default Raspberry Pi 1 base address if this fails.
 func getBase() (base int64) {
 	base = bcm2835Base
+	log.Printf("INFO: Default base address: 0x%X", base)
 	ranges, err := os.Open("/proc/device-tree/soc/ranges")
 	defer ranges.Close()
 	if err != nil {
+		log.Printf("ERROR: %v", err)
 		return
 	}
 	b := make([]byte, 4)
 	n, err := ranges.ReadAt(b, 4)
 	if n != 4 || err != nil {
+		log.Printf("ERROR: ReadAt (%d): %v", n, err)
 		return
 	}
 	buf := bytes.NewReader(b)
 	var out uint32
 	err = binary.Read(buf, binary.BigEndian, &out)
 	if err != nil {
+		log.Printf("ERROR: Read buf: %v", err)
 		return
 	}
+	log.Printf("INFO: Base address from ranges: 0x%X", out)
 	return int64(out)
 }

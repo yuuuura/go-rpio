@@ -11,8 +11,8 @@ Connect a LED with resistor from pin 19 to ground.
 package main
 
 import (
-	"fmt"
 	"go-rpio"
+	"log"
 	"os"
 	"time"
 )
@@ -25,7 +25,7 @@ var (
 func main() {
 	// Open and map memory to access gpio, check for errors
 	if err := rpio.Open(); err != nil {
-		fmt.Println(err)
+		log.Printf("Can't open mem file: %v", err)
 		os.Exit(1)
 	}
 
